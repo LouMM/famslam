@@ -1,0 +1,124 @@
+.item-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    /* So error-pane can be inside */
+}
+
+.droppable-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.item-card {
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    /* Removed width:100% that stretches image, rely on content-based sizing */
+    transition: box-shadow 0.2s ease;
+    overflow: hidden;
+    position: relative;
+    /* For swipe overlay */
+}
+
+.item-card.dragging {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.item-content {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    box-sizing: border-box;
+    padding: 8px;
+    /* No width:100% here, so image won't stretch */
+}
+
+.item-content:active {
+    cursor: grabbing;
+}
+
+.item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.item-text-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    /* user can click text to open details */
+}
+
+.item-recipe-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Limit the overlay-click area to the right side of the item */
+.item-overlay-click {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    cursor: pointer;
+}
+
+/* Swipe Overlay Styles */
+.item-swipe-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(255, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 1;
+    will-change: transform, opacity;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+    /* width:100% is okay here since it's inside the card which is sized by content */
+    width: 100%;
+}
+
+/* Error pane inside item-container at bottom */
+.error-pane {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #f8d7da;
+    color: #721c24;
+    border-top: 1px solid #f5c6cb;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.error-pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.error-message {
+    margin: 4px 0;
+}

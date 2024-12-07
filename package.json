@@ -1,0 +1,52 @@
+{
+  "name": "famslam",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --mode production",
+    "debug": "cross-env NODE_ENV=development webpack --mode development --devtool source-map --stats verbose",
+    "start:server": "cross-env NODE_ENV=development node --inspect=9229 -r ts-node/register src/server/server.ts",
+    "start:client": "cross-env NODE_ENV=development webpack serve --open",
+    "start": "concurrently \"npm:start:client\" \"npm:start:server\""
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/icons-material": "^5.14.4",
+    "@mui/material": "^5.14.4",
+    "@types/express": "^4.17.21",
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "babel-loader": "^9.2.1",
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18.2.0",
+    "react-quill": "^2.0.0",
+    "typescript": "^5.2.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/node": "^20.5.7",
+    "@types/react-beautiful-dnd": "^13.1.8",
+    "@types/uuid": "^10.0.0",
+    "babel": "^6.23.0",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
+    "esbuild-register": "^3.6.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "style-loader": "^4.0.0",
+    "swc": "^1.0.11",
+    "ts-loader": "^9.4.4",
+    "ts-node": "^10.9.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}

@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "(old)Start Webpack Dev Server",
+        "type": "shell",
+        "command": "npm run start",
+        "problemMatcher": "$tsc",
+        "isBackground": true,
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "Start Webpack Dev Server",
+        "type": "shell",
+        "command": "npm run start:client",
+        "isBackground": true,
+        "problemMatcher": [
+          {
+            "owner": "custom",
+            "pattern": [
+              {
+                "regexp": ".",
+                "file": 1,
+                "location": 2,
+                "message": 3
+              }
+            ],
+            "background": {
+              "activeOnStart": true,
+              "beginsPattern": "Compiling",
+              "endsPattern": "Compiled successfully"
+            }
+          }
+        ]
+      },
+      {
+        "label": "Start Node Server in Debug",
+        "type": "shell",
+        "command": "npm run start:server",
+        "isBackground": true,
+        "problemMatcher": []
+      }
+    ]
+  }

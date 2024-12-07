@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Attach to Node Server",
+        "type": "node",
+        "request": "attach",
+        "port": 9229,
+        "restart": true,
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "preLaunchTask": "Start Node Server in Debug"
+      },
+      {
+        "name": "Launch Edge against localhost",
+        "type": "msedge",
+        "request": "launch",
+        "url": "http://localhost:3000",
+        "webRoot": "${workspaceFolder}",
+        "preLaunchTask": "Start Webpack Dev Server",
+        "runtimeArgs": [
+          "--remote-debugging-port=9223"
+        ],
+        "sourceMaps": true,
+        "smartStep": true
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Run Full Stack Debug",
+        "configurations": [
+          "Attach to Node Server",
+          "Launch Edge against localhost"
+        ]
+      }
+    ]
+  }
+  
