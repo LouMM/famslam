@@ -22,7 +22,8 @@ interface AddItemDialogProps {
     title: string,
     imageUrl: string,
     recipeText: string,
-    cookTime: number
+    cookTime: number,
+    tags: string[]
   ) => void;
 }
 
@@ -37,6 +38,7 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
   const [title, setTitle] = useState("");
   const [recipeText, setRecipeText] = useState("");
   const [cookTime, setCookTime] = useState<number>(0);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -44,6 +46,7 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
       setTitle(defaultTitle || "");
       setRecipeText("");
       setCookTime(0);
+      setTags([]);
       if (images && images.length > 0) {
         setSelectedImage(images[0]);
       } else {
@@ -73,10 +76,29 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
     }
   };
 
+  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.trim();
+    const newTags = val
+      ? val
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t)
+      : [];
+    setTags(newTags);
+  };
+
   const handleSubmit = () => {
-    onSubmit(title, selectedImage, recipeText, isNaN(cookTime) ? 0 : cookTime);
+    onSubmit(
+      title,
+      selectedImage,
+      recipeText,
+      isNaN(cookTime) ? 0 : cookTime,
+      tags
+    );
     onClose();
   };
+
+  const tagString = tags.join(", ");
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -123,6 +145,13 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
             />
           ))}
         </div>
+        <TextField
+          label="Tags (comma-separated)"
+          fullWidth
+          margin="normal"
+          value={tagString}
+          onChange={handleTagChange}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

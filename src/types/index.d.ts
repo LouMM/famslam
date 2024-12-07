@@ -6,4 +6,5 @@ export interface RecipeItem {
     cookTime: number;
     url?: string;
     recipeText?: string;
+    tags?: string[];
 }

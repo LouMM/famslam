@@ -1,10 +1,12 @@
-import path from 'path'; import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { Configuration as WebpackConfiguration } from 'webpack';
-import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server'
+import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration;
 }
+
 const config: Configuration = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     entry: './src/index.tsx',
@@ -25,8 +27,8 @@ const config: Configuration = {
                         presets: [
                             '@babel/preset-env',
                             '@babel/preset-react',
-                            '@babel/preset-typescript',],
-
+                            '@babel/preset-typescript',
+                        ],
                     },
                 },
             },
@@ -35,10 +37,17 @@ const config: Configuration = {
                 use: ['style-loader', 'css-loader']
             },
             {
-                test: /\.(mp3|wav) $/,
+                test: /\.(mp3|wav)$/,
                 type: 'asset/resource',
                 generator: {
                     filename: 'sounds/[name][ext]'
+                }
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name][contenthash][ext]'
                 }
             }
         ],

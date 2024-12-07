@@ -1,12 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&display=swap');
+
 .app-container {
     display: flex;
     flex-direction: column;
     padding: 16px;
     box-sizing: border-box;
+    font-family: 'Corinthia', cursive;
+}
+
+.title-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 8px;
+}
+
+.title-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.title-text {
+    font-family: 'Corinthia', cursive;
+    font-size: 2rem;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .app-header {
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
+    align-items: flex-end;
+}
+
+.url-field-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
+.url-field-wrapper .MuiFormControl-root {
+    width: 100%;
 }

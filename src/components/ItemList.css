@@ -4,7 +4,8 @@
     width: 100%;
     box-sizing: border-box;
     position: relative;
-    /* So error-pane can be inside */
+    font-family: 'Corinthia', cursive;
+    /* Using the custom font if desired */
 }
 
 .droppable-list {
@@ -19,11 +20,10 @@
     background: #fff;
     display: flex;
     flex-direction: column;
-    /* Removed width:100% that stretches image, rely on content-based sizing */
+    /* No forced width:100% that stretches the image incorrectly */
     transition: box-shadow 0.2s ease;
     overflow: hidden;
     position: relative;
-    /* For swipe overlay */
 }
 
 .item-card.dragging {
@@ -36,7 +36,7 @@
     cursor: grab;
     box-sizing: border-box;
     padding: 8px;
-    /* No width:100% here, so image won't stretch */
+    flex-wrap: nowrap;
 }
 
 .item-content:active {
@@ -59,7 +59,6 @@
     gap: 4px;
     overflow: hidden;
     cursor: pointer;
-    /* user can click text to open details */
 }
 
 .item-recipe-info {
@@ -68,7 +67,13 @@
     gap: 4px;
 }
 
-/* Limit the overlay-click area to the right side of the item */
+.item-tags {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+}
+
 .item-overlay-click {
     position: absolute;
     top: 0;
@@ -78,7 +83,6 @@
     cursor: pointer;
 }
 
-/* Swipe Overlay Styles */
 .item-swipe-overlay {
     position: absolute;
     top: 0;
@@ -95,11 +99,9 @@
     will-change: transform, opacity;
     pointer-events: none;
     transition: opacity 0.2s ease-out;
-    /* width:100% is okay here since it's inside the card which is sized by content */
     width: 100%;
 }
 
-/* Error pane inside item-container at bottom */
 .error-pane {
     position: absolute;
     bottom: 0;

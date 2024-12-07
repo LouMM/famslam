@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Button, Typography } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import ItemList from "./ItemList";
 import AddItemDialog from "./AddItemDialog";
 import { RecipeItem } from "../types";
-import "./App.css"; // ensure styles are applied
+import "./App.css";
+import CloseIcon from "@mui/icons-material/Close";
 
 const App: React.FC = () => {
   const [items, setItems] = useState<RecipeItem[]>([]);
@@ -15,14 +22,35 @@ const App: React.FC = () => {
   const [pageToFetch, setPageToFetch] = useState<string>("");
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [urlValid, setUrlValid] = useState(true);
 
   function addErrorMessage(msg: string) {
     setErrorMessages((prev) => [...prev, msg]);
   }
 
+  function clearErrors() {
+    setErrorMessages([]);
+  }
+
+  const isValidHttpUrl = (input: string) => {
+    let url;
+    try {
+      url = new URL(input);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+  };
+
   const handleFetchPage = async () => {
     try {
       if (!url) return;
+      if (!isValidHttpUrl(url)) {
+        setUrlValid(false);
+        return;
+      }
+      setUrlValid(true);
+
       const proxyUrl = `http://localhost:5000/fetch-html?url=${encodeURIComponent(
         url
       )}`;
@@ -54,7 +82,6 @@ const App: React.FC = () => {
   };
 
   async function canLoadImage(u: string) {
-    // Check extension first
     const allowedExt = ["jpg", "jpeg", "png", "bmp", "gif"];
     const ext = u.split(".").pop()?.toLowerCase() || "";
     if (!allowedExt.includes(ext)) {
@@ -73,7 +100,8 @@ const App: React.FC = () => {
     title: string,
     imageUrl: string,
     recipeText: string,
-    cookTime: number
+    cookTime: number,
+    tags: string[]
   ) => {
     try {
       const newItem: RecipeItem = {
@@ -84,6 +112,7 @@ const App: React.FC = () => {
         cookTime,
         url: pageToFetch,
         recipeText,
+        tags,
       };
       setItems((prev) => [...prev, newItem]);
     } catch (err: any) {
@@ -119,27 +148,50 @@ const App: React.FC = () => {
     }
   };
 
-  function clearErrors() {
-    setErrorMessages([]);
-  }
-
   useEffect(() => {
     console.log("List changed:", items);
   }, [items]);
 
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setUrl(val);
+    if (!val) {
+      setUrlValid(true); // clear value = no error
+    } else {
+      setUrlValid(isValidHttpUrl(val));
+    }
+  };
+
   return (
     <Container className="app-container">
-      <Typography variant="h4" gutterBottom>
-        FamSlam
-      </Typography>
-      <div className="app-header">
-        <TextField
-          label="Page URL"
-          variant="outlined"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          fullWidth
+      <div className="title-bar">
+        <img
+          src={require("../assets/FamSlamSQ.jpg")}
+          alt="FamSlam"
+          className="title-icon"
         />
+        <Typography variant="h4" gutterBottom className="title-text">
+          FamSlam
+        </Typography>
+      </div>
+      <div className="app-header">
+        <div className="url-field-wrapper">
+          <TextField
+            label="Page URL"
+            variant="outlined"
+            value={url}
+            onChange={handleUrlChange}
+            fullWidth
+            InputProps={{
+              startAdornment:
+                !urlValid && url ? (
+                  <InputAdornment position="start">
+                    <CloseIcon style={{ color: "red" }} />
+                  </InputAdornment>
+                ) : undefined,
+            }}
+          />
+        </div>
         <Button variant="contained" onClick={handleFetchPage}>
           Fetch
         </Button>

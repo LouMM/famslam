@@ -3,3 +3,32 @@
     border-radius: 8px;
     margin-bottom: 16px;
 }
+
+.item-detail-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.item-detail-icon {
+    color: #555;
+}
+
+.item-detail-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.item-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.item-detail-tag-input {
+    margin-top: 8px;
+}

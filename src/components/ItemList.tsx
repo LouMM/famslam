@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ItemDetailDialog from "./ItemDetailDialog";
 import {
   DragDropContext,
@@ -54,7 +55,7 @@ const ItemList: React.FC<ItemListProps> = ({
     onReorder(reorderedItems);
   };
 
-  // Unified swipe logic for both touch and mouse
+  // Swipe logic for delete (unchanged)
   const [swipeData, setSwipeData] = useState<{
     id: string | null;
     startX: number;
@@ -75,7 +76,7 @@ const ItemList: React.FC<ItemListProps> = ({
   const endSwipe = (id: string, cardWidth: number) => {
     if (swipeData.id === id && swipeData.swiping) {
       const deltaX = swipeData.startX - swipeData.currentX;
-      const threshold = cardWidth * 0.75; // 75% of width for delete
+      const threshold = cardWidth * 0.75;
       if (deltaX > threshold) {
         onDelete(id);
       }
@@ -104,7 +105,7 @@ const ItemList: React.FC<ItemListProps> = ({
     return deltaX > cardWidth * 0.75;
   };
 
-  // Mouse event handlers for swipe
+  // Mouse events for swipe
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
     startSwipe(e.clientX, id);
   };
@@ -119,7 +120,7 @@ const ItemList: React.FC<ItemListProps> = ({
     endSwipe(id, cardWidth);
   };
 
-  // Touch event handlers for swipe
+  // Touch events for swipe
   const handleTouchStart = (
     e: React.TouchEvent<HTMLDivElement>,
     id: string
@@ -145,88 +146,99 @@ const ItemList: React.FC<ItemListProps> = ({
               ref={dropProvided.innerRef}
               className="droppable-list"
             >
-              {items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(draggableProvided, draggableSnapshot) => (
-                    <div
-                      ref={(el) => {
-                        draggableProvided.innerRef(el);
-                        setCardEl(el);
-                      }}
-                      {...draggableProvided.draggableProps}
-                    >
-                      <Card
-                        className={`item-card ${
-                          draggableSnapshot.isDragging ? "dragging" : ""
-                        }`}
-                        style={{ touchAction: "none", position: "relative" }}
+              {items.map((item, index) => {
+                const tagCount = item.tags ? item.tags.length : 0;
+                const tagLabel = tagCount > 0 ? `(${tagCount})` : "";
+                return (
+                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                    {(draggableProvided, draggableSnapshot) => (
+                      <div
+                        ref={(el) => {
+                          draggableProvided.innerRef(el);
+                          setCardEl(el);
+                        }}
+                        {...draggableProvided.draggableProps}
                       >
-                        {/* Red swipe overlay inside the card */}
-                        <div
-                          className="item-swipe-overlay"
-                          style={getOverlayStyle(
-                            item.id,
-                            cardEl?.offsetWidth || 0
-                          )}
+                        <Card
+                          className={`item-card ${
+                            draggableSnapshot.isDragging ? "dragging" : ""
+                          }`}
+                          style={{ touchAction: "none", position: "relative" }}
                         >
-                          {shouldShowDeleteText(
-                            item.id,
-                            cardEl?.offsetWidth || 0
-                          )
-                            ? "Delete Item"
-                            : ""}
-                        </div>
-                        <div
-                          className="item-content"
-                          {...draggableProvided.dragHandleProps}
-                        >
-                          <IconButton size="small" color="primary">
-                            <DragIndicatorIcon />
-                          </IconButton>
-                          <CardMedia
-                            component="img"
-                            image={item.imageUrl || ""}
-                            alt={item.title}
-                            className="item-image"
-                            onClick={() => handleSelectItem(item)}
-                          />
-                          <CardContent
-                            className="item-text-content"
-                            onClick={() => handleSelectItem(item)}
+                          <div
+                            className="item-swipe-overlay"
+                            style={getOverlayStyle(
+                              item.id,
+                              cardEl?.offsetWidth || 0
+                            )}
                           >
-                            <Typography variant="subtitle1">
-                              {item.title}
-                            </Typography>
-                            <div className="item-recipe-info">
-                              {item.hasRecipe && (
-                                <RestaurantIcon fontSize="small" />
-                              )}
-                              <Typography variant="body2">
-                                {item.cookTime} mins
+                            {shouldShowDeleteText(
+                              item.id,
+                              cardEl?.offsetWidth || 0
+                            )
+                              ? "Delete Item"
+                              : ""}
+                          </div>
+                          <div
+                            className="item-content"
+                            {...draggableProvided.dragHandleProps}
+                          >
+                            <IconButton size="small" color="primary">
+                              <DragIndicatorIcon />
+                            </IconButton>
+                            <CardMedia
+                              component="img"
+                              image={item.imageUrl || ""}
+                              alt={item.title}
+                              className="item-image"
+                              onClick={() => handleSelectItem(item)}
+                            />
+                            <CardContent
+                              className="item-text-content"
+                              onClick={() => handleSelectItem(item)}
+                            >
+                              <Typography variant="subtitle1">
+                                {item.title}
                               </Typography>
-                            </div>
-                          </CardContent>
-                        </div>
-                        <div
-                          className="item-overlay-click"
-                          // Touch events
-                          onTouchStart={(e) => handleTouchStart(e, item.id)}
-                          onTouchMove={(e) => handleTouchMove(e, item.id)}
-                          onTouchEnd={() =>
-                            handleTouchEnd(item.id, cardEl?.offsetWidth || 0)
-                          }
-                          // Mouse events
-                          onMouseDown={(e) => handleMouseDown(e, item.id)}
-                          onMouseMove={(e) => handleMouseMove(e, item.id)}
-                          onMouseUp={() =>
-                            handleMouseUp(item.id, cardEl?.offsetWidth || 0)
-                          }
-                        />
-                      </Card>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+                              <div className="item-recipe-info">
+                                {item.hasRecipe && (
+                                  <RestaurantIcon fontSize="small" />
+                                )}
+                                <Typography variant="body2">
+                                  {item.cookTime} mins
+                                </Typography>
+                              </div>
+                            </CardContent>
+                            {tagCount > 0 && (
+                              <div className="item-tags">
+                                <LocalOfferIcon fontSize="small" />
+                                <Typography variant="body2">
+                                  {tagLabel}
+                                </Typography>
+                              </div>
+                            )}
+                          </div>
+                          <div
+                            className="item-overlay-click"
+                            // Touch events
+                            onTouchStart={(e) => handleTouchStart(e, item.id)}
+                            onTouchMove={(e) => handleTouchMove(e, item.id)}
+                            onTouchEnd={() =>
+                              handleTouchEnd(item.id, cardEl?.offsetWidth || 0)
+                            }
+                            // Mouse events
+                            onMouseDown={(e) => handleMouseDown(e, item.id)}
+                            onMouseMove={(e) => handleMouseMove(e, item.id)}
+                            onMouseUp={() =>
+                              handleMouseUp(item.id, cardEl?.offsetWidth || 0)
+                            }
+                          />
+                        </Card>
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              })}
               {dropProvided.placeholder}
             </div>
           )}
@@ -244,7 +256,6 @@ const ItemList: React.FC<ItemListProps> = ({
         />
       )}
 
-      {/* Error Pane inside item-container at bottom */}
       {errorPaneVisible && errorMessages.length > 0 && (
         <div className="error-pane">
           <div className="error-pane-header">
