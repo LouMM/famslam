@@ -8,41 +8,53 @@ import {
   TextField,
   Typography,
   IconButton,
+  Box,
+  Chip,
 } from "@mui/material";
-import { RecipeItem } from "../types";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import LinkIcon from "@mui/icons-material/Link";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
-import RamenDiningIcon from "@mui/icons-material/RamenDining";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import LinkIcon from "@mui/icons-material/Link";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import HistoryIcon from "@mui/icons-material/History";
+import ReactQuill from "react-quill";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import "react-quill/dist/quill.snow.css";
+
 import "./ItemDetailDialog.css";
+import { RecipeItem } from "../types";
 
 interface ItemDetailDialogProps {
   item: RecipeItem;
   onClose: () => void;
+  onSave: (updatedItem: RecipeItem) => void;
   onDelete: (id: string) => void;
 }
 
 const ItemDetailDialog: React.FC<ItemDetailDialogProps> = ({
   item,
   onClose,
+  onSave,
   onDelete,
 }) => {
+  const [title, setTitle] = useState(item.title);
+  const [cookTime, setCookTime] = useState(item.cookTime);
   const [recipeText, setRecipeText] = useState(item.recipeText || "");
-  const [tags, setTags] = useState(item.tags || []); // Assume tags array is stored in item
-  // If item.tags doesn't exist yet, we must also handle this in ItemList or App when adding items.
-
-  const handleDelete = () => {
-    // Save changes before delete if needed (not specified, but recipe is updated on close anyway)
-    onDelete(item.id);
-    onClose(); // Close the dialog after deletion
-  };
+  const [tags, setTags] = useState(item.tags || []);
+  const [url, setUrl] = useState(item.url || "");
+  const [urlEditable, setUrlEditable] = useState(false);
+  const [currentTag, setCurrentTag] = useState("");
 
   const handleSave = () => {
-    // On close, we should save the updated recipeText and tags back to the item
     item.recipeText = recipeText;
     item.tags = tags;
+    onSave({
+      ...item,
+      title,
+      cookTime,
+      recipeText,
+      tags,
+      url,
+    });
     onClose();
   };
 
@@ -51,73 +63,148 @@ const ItemDetailDialog: React.FC<ItemDetailDialogProps> = ({
     const newTags = val
       ? val
           .split(",")
-          .map((t) => t.trim())
-          .filter((t) => t)
+          .map((tag) => tag.trim())
+          .filter((tag) => tag)
       : [];
     setTags(newTags);
   };
 
-  const tagString = tags.join(", ");
+  const handleCookTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCookTime(Number(e.target.value.trim()) || 0);
+  };
+  const handleBlurCookTime = () => {
+    if (isNaN(cookTime)) {
+      setCookTime(0);
+    }
+  };
+  const handleFocusCookTime = () => {
+    if (cookTime === 0) {
+      setCookTime(NaN); // set to NaN to clear field visually
+    }
+  };
+
+  const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "," || e.key === "Enter") {
+      e.preventDefault();
+      if (currentTag.trim()) {
+        setTags([...tags, `#${currentTag.trim()}`]);
+        setCurrentTag("");
+      }
+    }
+  };
+
+  const handleTagDelete = (tagToDelete: string) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
+
+  const handleUrlClick = () => {
+    if (!urlEditable && url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{item.title}</DialogTitle>
+      <DialogTitle>📝 Item Details</DialogTitle>
       <DialogContent dividers>
         <img
           src={item.imageUrl}
           alt={item.title}
           className="item-detail-image"
         />
-
-        <div className="item-detail-field">
-          <LinkIcon className="item-detail-icon" />
-          <Typography variant="body2">
-            <strong>URL:</strong>
-          </Typography>
-          {item.url ? (
-            <a href={item.url} target="_blank" rel="noopener noreferrer">
-              {item.url}
-            </a>
-          ) : (
-            <Typography variant="body2">N/A</Typography>
-          )}
-        </div>
-
-        <div className="item-detail-field">
-          <AvTimerIcon className="item-detail-icon" />
-          <Typography variant="body2">
-            <strong>Cook Time:</strong> {item.cookTime} mins
-          </Typography>
-        </div>
-
-        <div className="item-detail-field">
-          <RamenDiningIcon className="item-detail-icon" />
-          <Typography variant="body2">
-            <strong>Recipe:</strong>
-          </Typography>
-        </div>
-        <ReactQuill value={recipeText} onChange={setRecipeText} theme="snow" />
-
-        <div className="item-detail-field" style={{ marginTop: "16px" }}>
-          <LocalOfferIcon className="item-detail-icon" />
-          <Typography variant="body2">
-            <strong>Tags:</strong>
-          </Typography>
-        </div>
         <TextField
+          label="Title"
+          fullWidth
+          margin="normal"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <div className="item-detail-field">
+          <LinkIcon />
+          <TextField
+            label="URL"
+            fullWidth
+            margin="normal"
+            value={url}
+            disabled={!urlEditable}
+            onChange={(e) => setUrl(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <>
+                  <IconButton onClick={handleUrlClick} size="small">
+                    <OpenInNewIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => setUrlEditable((prev) => !prev)}
+                    size="small"
+                  >
+                    {urlEditable ? <SaveIcon /> : <EditIcon />}
+                  </IconButton>
+                </>
+              ),
+            }}
+          />
+        </div>
+        <div className="item-detail-field">
+          <HistoryIcon />
+          <TextField
+            label="Cook Time (mins)"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={cookTime}
+            onBlur={handleBlurCookTime}
+            onFocus={handleFocusCookTime}
+            onChange={handleCookTimeChange}
+          />
+        </div>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Recipe:</strong>
+        </Typography>
+        <ReactQuill value={recipeText} onChange={setRecipeText} theme="snow" />
+        <Typography variant="subtitle1" gutterBottom style={{ marginTop: 16 }}>
+          🏷️Tags:
+        </Typography>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          gap={1}
+          sx={{ alignItems: "center" }}
+        >
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              color="primary"
+              onDelete={() => handleTagDelete(tag)}
+            />
+          ))}
+          <TextField
+            value={currentTag}
+            placeholder="Add tags, comma seperated..."
+            onChange={(e) => setCurrentTag(e.target.value)}
+            onKeyDown={handleTagKeyPress}
+            size="small"
+            variant="outlined"
+            style={{ flex: "1 0 auto", minWidth: "150px" }}
+            fullWidth
+          />
+        </Box>
+        {/* <TextField
           label="Tags (comma-separated)"
           fullWidth
           margin="normal"
-          value={tagString}
+          value={tags.join(", ")}
           onChange={handleTagChange}
-        />
+        /> */}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDelete} color="error">
+        <Button onClick={() => onDelete(item.id)} color="error">
           Delete
         </Button>
-        <Button onClick={handleSave} color="primary">
-          Close
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained" color="primary">
+          Save
         </Button>
       </DialogActions>
     </Dialog>

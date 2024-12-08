@@ -61,7 +61,7 @@ const App: React.FC = () => {
       const pageTitle = doc.querySelector("title")?.innerText || "";
 
       const imgElements = Array.from(doc.querySelectorAll("img"));
-      const firstFive = imgElements.slice(0, 5).map((img) => img.src);
+      const firstFive = imgElements.slice(0, 10).map((img) => img.src);
 
       // Validate images
       const validImages: string[] = [];
@@ -170,14 +170,14 @@ const App: React.FC = () => {
           alt="FamSlam"
           className="title-icon"
         />
-        <Typography variant="h4" gutterBottom className="title-text">
+        <span className="title-text" >
           FamSlam
-        </Typography>
+        </span>
       </div>
       <div className="app-header">
         <div className="url-field-wrapper">
           <TextField
-            label="Page URL"
+              label="Page URL"
             variant="outlined"
             value={url}
             onChange={handleUrlChange}

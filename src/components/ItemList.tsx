@@ -6,11 +6,13 @@ import {
   CardContent,
   Typography,
   IconButton,
+  Box,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ItemDetailDialog from "./ItemDetailDialog";
+import AvTimerIcon from "@mui/icons-material/AvTimer";
 import {
   DragDropContext,
   Droppable,
@@ -187,6 +189,7 @@ const ItemList: React.FC<ItemListProps> = ({
                               <DragIndicatorIcon />
                             </IconButton>
                             <CardMedia
+                              sx={{ width: 80 }}
                               component="img"
                               image={item.imageUrl || ""}
                               alt={item.title}
@@ -204,6 +207,7 @@ const ItemList: React.FC<ItemListProps> = ({
                                 {item.hasRecipe && (
                                   <RestaurantIcon fontSize="small" />
                                 )}
+                                <AvTimerIcon className="item-detail-icon" />
                                 <Typography variant="body2">
                                   {item.cookTime} mins
                                 </Typography>
@@ -252,6 +256,9 @@ const ItemList: React.FC<ItemListProps> = ({
           onDelete={(id) => {
             onDelete(id);
             handleCloseDetail(); // Close after delete
+          }}
+          onSave={function (updatedItem: RecipeItem): void {
+            handleCloseDetail();
           }}
         />
       )}

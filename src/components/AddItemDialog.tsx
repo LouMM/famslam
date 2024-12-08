@@ -7,11 +7,13 @@ import {
   Button,
   TextField,
   Typography,
+  Box,
+  Chip,
 } from "@mui/material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import "./AddItemDialogstyle.css";
+import "./AddItemDialog.css";
 
 interface AddItemDialogProps {
   open: boolean;
@@ -39,6 +41,7 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
   const [recipeText, setRecipeText] = useState("");
   const [cookTime, setCookTime] = useState<number>(0);
   const [tags, setTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -98,6 +101,20 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
     onClose();
   };
 
+  const handleTagDelete = (tagToDelete: string) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
+
+  const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "," || e.key === "Enter") {
+      e.preventDefault();
+      if (currentTag.trim()) {
+        setTags([...tags, `#${currentTag.trim()}`]);
+        setCurrentTag("");
+      }
+    }
+  };
+
   const tagString = tags.join(", ");
 
   return (
@@ -145,13 +162,39 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
             />
           ))}
         </div>
-        <TextField
+        <Typography variant="subtitle1" gutterBottom style={{ marginTop: 16 }}>
+          🏷️Tags:
+        </Typography>
+        <Box display="flex"
+          flexWrap="wrap"
+          gap={1}
+          sx={{ alignItems: "center" }}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              color="primary"
+              onDelete={() => handleTagDelete(tag)}
+            />
+          ))}
+          <TextField
+            value={currentTag}
+            placeholder="Add tags, comma seperated..."
+            onChange={(e) => setCurrentTag(e.target.value)}
+            onKeyDown={handleTagKeyPress}
+            size="small"
+            variant="outlined"
+            style={{ flex: "1 0 auto", minWidth: "150px" }}
+            fullWidth
+          />
+        </Box>
+        {/* <TextField
           label="Tags (comma-separated)"
           fullWidth
           margin="normal"
           value={tagString}
           onChange={handleTagChange}
-        />
+        /> */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

@@ -20,7 +20,6 @@
     background: #fff;
     display: flex;
     flex-direction: column;
-    /* No forced width:100% that stretches the image incorrectly */
     transition: box-shadow 0.2s ease;
     overflow: hidden;
     position: relative;
