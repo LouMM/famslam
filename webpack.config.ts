@@ -10,11 +10,12 @@ interface Configuration extends WebpackConfiguration {
 const config: Configuration = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     entry: './src/index.tsx',
-    devtool: process.env.NODE_ENV === 'production' ? false : 'inline-source-map',
+    devtool: process.env.NODE_ENV === 'production' ? false :  'source-map',// : 'inline-source-map',
     devServer: {
         static: './dist',
         hot: true,
-        port: 3000
+        port: 3000,
+        historyApiFallback: true // Support SPA routing
     },
     module: {
         rules: [

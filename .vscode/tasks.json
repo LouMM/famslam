@@ -15,7 +15,7 @@
       {
         "label": "Start Webpack Dev Server",
         "type": "shell",
-        "command": "npm run start:client",
+        "command": "npm run start",
         "isBackground": true,
         "problemMatcher": [
           {

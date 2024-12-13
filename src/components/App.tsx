@@ -9,11 +9,16 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import ItemList from "./ItemList";
 import AddItemDialog from "./AddItemDialog";
-import { RecipeItem } from "../types";
+import { RecipeItem,siteDetails } from "../types";
 import "./App.css";
 import CloseIcon from "@mui/icons-material/Close";
+import apiService from "./ApiService";
 
-const App: React.FC = () => {
+interface AppProps {
+  loggedInUser: string;
+}
+
+const App: React.FC<AppProps> = ({ loggedInUser }) => {
   const [items, setItems] = useState<RecipeItem[]>([]);
   const [url, setUrl] = useState<string>("");
   const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
@@ -51,21 +56,19 @@ const App: React.FC = () => {
       }
       setUrlValid(true);
 
-      const proxyUrl = `http://localhost:5000/fetch-html?url=${encodeURIComponent(
-        url
-      )}`;
-      const response = await fetch(proxyUrl);
-      const htmlText = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlText, "text/html");
-      const pageTitle = doc.querySelector("title")?.innerText || "";
+      // const proxyUrl = `http://localhost:8080/fetch-html?url=${encodeURIComponent(url)}`;
+      // const response = await fetch(proxyUrl);
+      // const htmlText = await response.text();
+      // const parser = new DOMParser();
+      // const doc = parser.parseFromString(htmlText, "text/html");
+      // const pageTitle = doc.querySelector("title")?.innerText || "";
 
-      const imgElements = Array.from(doc.querySelectorAll("img"));
-      const firstFive = imgElements.slice(0, 10).map((img) => img.src);
-
+      // const imgElements = Array.from(doc.querySelectorAll("img"));
+      // const firstFive = imgElements.slice(0, 10).map((img) => img.src);
+      const {pageTitle, images} = await apiService.getImages(url);
       // Validate images
       const validImages: string[] = [];
-      for (const imgUrl of firstFive) {
+      for (const imgUrl of images) {
         if (!imgUrl) continue;
         const ok = await canLoadImage(imgUrl);
         if (ok) validImages.push(imgUrl);
@@ -122,12 +125,12 @@ const App: React.FC = () => {
 
   const playSwoosh = () => {
     const audio = new Audio("sounds/swoosh.mp3");
-    audio.play().catch((e) => {});
+    audio.play().catch((e) => { });
   };
 
   const playDelete = () => {
     const audio = new Audio("sounds/delete.mp3");
-    audio.play().catch((e) => {});
+    audio.play().catch((e) => { });
   };
 
   const handleItemsReordered = (newItems: RecipeItem[]) => {
@@ -177,7 +180,7 @@ const App: React.FC = () => {
       <div className="app-header">
         <div className="url-field-wrapper">
           <TextField
-              label="Page URL"
+            label="Page URL"
             variant="outlined"
             value={url}
             onChange={handleUrlChange}
@@ -208,6 +211,7 @@ const App: React.FC = () => {
         onClose={() => setOpenAddDialog(false)}
         images={fetchedImages}
         defaultTitle={fetchedTitle}
+        loggedInUser={loggedInUser}
         onSubmit={handleAddItem}
       />
     </Container>

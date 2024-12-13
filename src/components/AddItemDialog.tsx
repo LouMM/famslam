@@ -20,12 +20,15 @@ interface AddItemDialogProps {
   onClose: () => void;
   images: string[];
   defaultTitle: string;
+  loggedInUser: string;
   onSubmit: (
     title: string,
     imageUrl: string,
     recipeText: string,
     cookTime: number,
-    tags: string[]
+    tags: string[],
+    createdDate: string,
+    loggedInUser: string | undefined
   ) => void;
 }
 
@@ -34,6 +37,7 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
   onClose,
   images,
   defaultTitle,
+  loggedInUser,
   onSubmit,
 }) => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -91,12 +95,15 @@ const AddItemDialog: React.FC<AddItemDialogProps> = ({
   };
 
   const handleSubmit = () => {
+    const createdDate = new Date().toISOString();
     onSubmit(
       title,
       selectedImage,
       recipeText,
       isNaN(cookTime) ? 0 : cookTime,
-      tags
+      tags,
+      createdDate,
+      loggedInUser
     );
     onClose();
   };

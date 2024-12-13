@@ -8,3 +8,8 @@ export interface RecipeItem {
     recipeText?: string;
     tags?: string[];
 }
+
+export interface siteDetails{
+    pageTitle: string;
+    images:string[];
+}

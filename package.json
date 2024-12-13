@@ -4,7 +4,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --mode production",
     "debug": "cross-env NODE_ENV=development webpack --mode development --devtool source-map --stats verbose",
-    "start:server": "cross-env NODE_ENV=development node --inspect=9229 -r ts-node/register src/server/server.ts",
+    "start:server": "cross-env NODE_ENV=development node --inspect=9229 -r ts-node/register src/server/server.ts -p 8083",
     "start:client": "cross-env NODE_ENV=development webpack serve --open",
     "start": "concurrently \"npm:start:client\" \"npm:start:server\""
   },
@@ -18,6 +18,7 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "babel-loader": "^9.2.1",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "node-fetch": "^3.3.2",
     "react": "^18.2.0",
@@ -31,6 +32,7 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
+    "@types/cors": "^2.8.17",
     "@types/node": "^20.5.7",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/uuid": "^10.0.0",
