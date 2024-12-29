@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -44,6 +44,16 @@ const ItemDetailDialog: React.FC<ItemDetailDialogProps> = ({
   const [urlEditable, setUrlEditable] = useState(false);
   const [currentTag, setCurrentTag] = useState("");
 
+    // Reset the state variables when `item` changes
+    useEffect(() => {
+      setTitle(item.title || "");
+      setCookTime(item.cookTime || 0);
+      setRecipeText(item.recipeText || "");
+      setTags(item.tags || []);
+      setUrl(item.url || "");
+      //setCurrentTag("");
+    }, [item]);
+  
   const handleSave = () => {
     item.recipeText = recipeText;
     item.tags = tags;
